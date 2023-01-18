@@ -2,6 +2,8 @@
 
 A simple tool to toggle Windows light/dark theme.
 
+You need Windows 10 14393 or above.
+
 
 # Usage
 
