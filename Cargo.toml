@@ -1,5 +1,5 @@
 [package]
-name = "toggle_windows_theme"
+name = "toggle-windows-theme"
 version = "0.1.0"
 edition = "2021"
 
@@ -11,7 +11,3 @@ windows = { version = "0.44.0", features = ["Win32_UI_WindowsAndMessaging", "Win
 
 [build-dependencies]
 winres = "0.1.12"
-
-[[bin]]
-name = "toggle-theme"
-path = "src/main.rs"
