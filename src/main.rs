@@ -1,13 +1,9 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use windows::w;
-use windows::Win32::Foundation::HWND;
-use windows::Win32::Foundation::LPARAM;
-use windows::Win32::Foundation::WPARAM;
-use windows::Win32::UI::WindowsAndMessaging::SendMessageTimeoutW;
-use windows::Win32::UI::WindowsAndMessaging::SMTO_BLOCK;
-use windows::Win32::UI::WindowsAndMessaging::WM_SETTINGCHANGE;
-use winreg::enums::*;
+use windows::Win32::Foundation::{HWND, LPARAM, WPARAM};
+use windows::Win32::UI::WindowsAndMessaging::{SendMessageTimeoutW, SMTO_BLOCK, WM_SETTINGCHANGE};
+use winreg::enums::{HKEY_CURRENT_USER, KEY_READ, KEY_WRITE};
 use winreg::RegKey;
 
 const PERSONALIZE_REGISTRY_KEY: &str =
@@ -33,13 +29,13 @@ fn main() {
         .expect(SYSTEM_REQUIREMENTS_ERROR_MESSAGE);
 
     let current_windows_theme = get_windows_theme(&personalize_reg_key);
-    println!("Current Windows theme is: {:?}", current_windows_theme);
+    println!("Current Windows theme is: {current_windows_theme:?}");
 
     let theme_to_switch_to = match current_windows_theme {
         Theme::Light => Theme::Dark,
         Theme::Dark => Theme::Light,
     };
-    println!("Setting Windows theme to: {:?}", theme_to_switch_to);
+    println!("Setting Windows theme to: {theme_to_switch_to:?}");
     set_windows_theme(theme_to_switch_to, &personalize_reg_key);
 }
 
@@ -68,7 +64,9 @@ fn set_windows_theme(theme: Theme, personalize_reg_key: &RegKey) {
         .get_value::<u32, _>(SYSTEM_USES_LIGHT_THEME_REGISTRY_KEY)
         .is_ok()
     {
-        let _ = personalize_reg_key.set_value(SYSTEM_USES_LIGHT_THEME_REGISTRY_KEY, &reg_value);
+        personalize_reg_key
+            .set_value(SYSTEM_USES_LIGHT_THEME_REGISTRY_KEY, &reg_value)
+            .expect(SYSTEM_REQUIREMENTS_ERROR_MESSAGE);
     }
 
     broadcast_windows_theme_changed_message();
