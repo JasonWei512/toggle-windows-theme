@@ -80,7 +80,7 @@ fn broadcast_windows_theme_changed_message() {
             WPARAM::default(),
             LPARAM(w!("ImmersiveColorSet").as_ptr() as isize),
             SMTO_BLOCK,
-            100,
+            1000,
             None,
         );
     }
