@@ -2,7 +2,9 @@
 
 use windows::w;
 use windows::Win32::Foundation::{HWND, LPARAM, WPARAM};
-use windows::Win32::UI::WindowsAndMessaging::{SendMessageTimeoutW, SMTO_BLOCK, WM_SETTINGCHANGE};
+use windows::Win32::UI::WindowsAndMessaging::{
+    SendMessageTimeoutW, SMTO_BLOCK, WM_DWMCOLORIZATIONCOLORCHANGED, WM_SETTINGCHANGE,
+};
 use winreg::enums::{HKEY_CURRENT_USER, KEY_READ, KEY_WRITE};
 use winreg::RegKey;
 
@@ -74,11 +76,23 @@ fn set_windows_theme(theme: Theme, personalize_reg_key: &RegKey) {
 
 fn broadcast_windows_theme_changed_message() {
     unsafe {
+        let hwnd_broadcast = HWND(0xffff);
+
         SendMessageTimeoutW(
-            HWND(0xffff), // HWND_BROADCAST
+            hwnd_broadcast,
             WM_SETTINGCHANGE,
             WPARAM::default(),
             LPARAM(w!("ImmersiveColorSet").as_ptr() as isize),
+            SMTO_BLOCK,
+            1000,
+            None,
+        );
+
+        SendMessageTimeoutW(
+            hwnd_broadcast,
+            WM_DWMCOLORIZATIONCOLORCHANGED,
+            WPARAM::default(),
+            LPARAM::default(),
             SMTO_BLOCK,
             1000,
             None,
